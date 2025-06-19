@@ -71,18 +71,53 @@ Create a `.env` file based on `.env.example` and configure the following:
 #### Logging
 - `LOG_LEVEL`: Logging level (default: info)
 - `LOG_FILE`: Log file path (optional)
+- `DISABLE_LOGGING`: Set to 'true' to disable all logging for clean JSON-RPC output
+- `MCP_MODE`: Set to 'true' to enable MCP mode (disables logging for protocol compliance)
 
 ## Usage
 
 ### Starting the Server
 
 ```bash
-# Development mode
+# Development mode (with logging)
 npm run dev
 
-# Production mode
+# Development mode (MCP - clean JSON-RPC)
+npm run dev:mcp
+
+# Production mode (with logging)
+npm start
+
+# Production mode (MCP - clean JSON-RPC)
+npm run start:mcp
+```
+
+### MCP Protocol Compliance
+
+This server is fully compliant with the Model Context Protocol (MCP) specification:
+
+- **Clean JSON-RPC Output**: When `MCP_MODE=true` or `DISABLE_LOGGING=true`, all logs are redirected to stderr, ensuring clean JSON-RPC NDJSON output on stdout
+- **Protocol Version**: Supports MCP protocol version 2024-11-05
+- **Standard Methods**: Implements all required MCP methods (initialize, tools/list, tools/call)
+- **Error Handling**: Proper JSON-RPC error responses with standard error codes
+
+#### Running as MCP Server
+
+To use this server with MCP clients, start it with logging disabled:
+
+```bash
+# Option 1: Using npm script (recommended)
+npm run start:mcp
+
+# Option 2: Using environment variable
+MCP_MODE=true node dist/index.js
+
+# Option 3: Using .env file
+echo "MCP_MODE=true" >> .env
 npm start
 ```
+
+This ensures that stdout contains only JSON-RPC messages, which is required for MCP protocol compliance.
 
 ### MCP Tools
 

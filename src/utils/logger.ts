@@ -1,9 +1,13 @@
 import winston from 'winston';
+import { Writable } from 'stream';
 import { loggingConfig } from '../config/index.js';
+
+// Check if logging should be disabled for MCP protocol compliance
+const isLoggingDisabled = process.env.DISABLE_LOGGING === 'true' || process.env.MCP_MODE === 'true';
 
 // Create logger instance
 const logger = winston.createLogger({
-  level: loggingConfig.level,
+  level: isLoggingDisabled ? 'error' : loggingConfig.level,
   format: winston.format.combine(
     winston.format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss'
@@ -12,9 +16,15 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   defaultMeta: { service: 'search-mcp-server' },
-  transports: [
-    // Console transport
+  transports: isLoggingDisabled ? [
+    // Null transport to prevent winston warnings
+    new winston.transports.Stream({
+      stream: new Writable({ write() {} })
+    })
+  ] : [
+    // Console transport - write to stderr to avoid interfering with MCP JSON-RPC on stdout
     new winston.transports.Console({
+      stderrLevels: ['error', 'warn', 'info', 'debug'],
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple(),

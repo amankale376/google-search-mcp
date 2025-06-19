@@ -123,19 +123,21 @@ export const serverConfig: ServerConfig = {
 
 // Validation
 export function validateConfig(): void {
+  const isLoggingDisabled = process.env.DISABLE_LOGGING === 'true' || process.env.MCP_MODE === 'true';
+  
   // Check if at least one AI provider is configured
-  if (Object.keys(serverConfig.aiProviders).length === 0) {
-    console.warn('Warning: No AI providers configured. Query expansion and filtering will be disabled.');
+  if (Object.keys(serverConfig.aiProviders).length === 0 && !isLoggingDisabled) {
+    process.stderr.write('Warning: No AI providers configured. Query expansion and filtering will be disabled.\n');
   }
 
   // Check if Google Search is configured
-  if (!serverConfig.googleSearch) {
-    console.warn('Warning: Google Search API not configured. Search functionality will be limited.');
+  if (!serverConfig.googleSearch && !isLoggingDisabled) {
+    process.stderr.write('Warning: Google Search API not configured. Search functionality will be limited.\n');
   }
 
   // Check if Apollo is configured
-  if (!serverConfig.apollo) {
-    console.warn('Warning: Apollo API not configured. Contact enrichment will be disabled.');
+  if (!serverConfig.apollo && !isLoggingDisabled) {
+    process.stderr.write('Warning: Apollo API not configured. Contact enrichment will be disabled.\n');
   }
 
   // Validate database path
@@ -158,16 +160,16 @@ export function validateConfig(): void {
   }
 
   // Validate search configuration
-  if (serverConfig.search.defaultDelayMs < 30000) {
-    console.warn('Warning: Search delay is less than 30 seconds. This may trigger rate limiting.');
+  if (serverConfig.search.defaultDelayMs < 30000 && !isLoggingDisabled) {
+    process.stderr.write('Warning: Search delay is less than 30 seconds. This may trigger rate limiting.\n');
   }
 
-  if (serverConfig.search.maxResults > 100) {
-    console.warn('Warning: Max results is greater than 100. This may impact performance.');
+  if (serverConfig.search.maxResults > 100 && !isLoggingDisabled) {
+    process.stderr.write('Warning: Max results is greater than 100. This may impact performance.\n');
   }
 
-  if (serverConfig.search.maxLocations > 50) {
-    console.warn('Warning: Max locations is greater than 50. This may result in very long search operations.');
+  if (serverConfig.search.maxLocations > 50 && !isLoggingDisabled) {
+    process.stderr.write('Warning: Max locations is greater than 50. This may result in very long search operations.\n');
   }
 }
 
