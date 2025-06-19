@@ -1,0 +1,49 @@
+# Node modules
+node_modules
+npm-debug.log*
+
+# Build output
+dist
+
+# Test files
+**/*.test.ts
+**/*.spec.ts
+src/test
+
+# Development files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs
+
+# Logs
+logs
+*.log
+
+# Coverage
+coverage
+
+# Temporary files
+tmp
+temp
+verify.sh
+test-*.js

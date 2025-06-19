@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  search-mcp-server:
+    build: .
+    container_name: search-mcp-server
+    restart: unless-stopped
+    environment:
+      - MCP_MODE=true
+      - DATABASE_PATH=/app/data/search.db
+      - LOG_LEVEL=info
+      # Add your API keys here or use .env file
+      # - GOOGLE_SEARCH_API_KEY=your_key_here
+      # - GOOGLE_SEARCH_ENGINE_ID=your_id_here
+      # - APOLLO_API_KEY=your_key_here
+      # - OPENAI_API_KEY=your_key_here
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    stdin_open: true
+    tty: true
+    # Uncomment if you need to expose a port for health checks
+    # ports:
+    #   - "3000:3000"
+
+  # Development version with logging enabled
+  search-mcp-server-dev:
+    build: .
+    container_name: search-mcp-server-dev
+    restart: unless-stopped
+    environment:
+      - MCP_MODE=false
+      - DATABASE_PATH=/app/data/search.db
+      - LOG_LEVEL=debug
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    command: ["npm", "start"]
+    profiles:
+      - dev

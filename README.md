@@ -307,6 +307,56 @@ npm run build
 npm run prepare
 ```
 
+### Docker Deployment
+
+The project includes Docker configuration for containerized deployment:
+
+#### Building Docker Image
+
+```bash
+# Build the Docker image
+docker build -t search-mcp-server .
+
+# Or use docker-compose
+docker-compose build
+```
+
+#### Running with Docker
+
+```bash
+# Run in MCP mode (default)
+docker-compose up
+
+# Run in development mode with logging
+docker-compose --profile dev up search-mcp-server-dev
+
+# Run detached
+docker-compose up -d
+```
+
+#### Docker Build Process
+
+The Dockerfile uses a multi-stage approach to fix the TypeScript build issue:
+
+1. **Install dependencies**: `npm ci --ignore-scripts` (skips the `prepare` script)
+2. **Copy source files**: Copies `src/`, `tsconfig.json`, etc.
+3. **Build TypeScript**: `npm run build` (now has source files available)
+4. **Run server**: Starts in MCP mode by default
+
+This ensures TypeScript compilation has access to source files during the Docker build process.
+
+#### Environment Variables for Docker
+
+Set these in your `docker-compose.yml` or pass via `-e` flags:
+
+```yaml
+environment:
+  - MCP_MODE=true
+  - GOOGLE_SEARCH_API_KEY=your_key
+  - APOLLO_API_KEY=your_key
+  - OPENAI_API_KEY=your_key
+```
+
 ## API Integration
 
 ### Google Custom Search API
